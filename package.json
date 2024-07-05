@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "animate.css": "^4.1.1",
+    "axios": "^1.7.2",
     "firebase": "^10.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-razorpay": "^2.0.1",
     "react-router-dom": "^6.23.1",
     "remixicon": "^4.2.0",
     "sweetalert2": "^11.11.1",

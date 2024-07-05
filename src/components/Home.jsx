@@ -9,11 +9,14 @@ import "swiper/css";
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Swal from "sweetalert2";
+import axios from 'axios'
+import useRazorpay from "react-razorpay";
 
 const db = getFirestore(firebaseAppConfig)
 const auth = getAuth(firebaseAppConfig)
 
 const Home = ()=>{
+    const [Razorpay] = useRazorpay();
     const [products, setProducts] = useState([])
     const [session, setSession] = useState(null)
 
@@ -60,6 +63,34 @@ const Home = ()=>{
                 title: 'Failed !',
                 text: err.message
             })
+        }
+    }
+
+    const buyNow = async (title, price)=>{
+        try {
+            const {data} = await axios.post('http://localhost:8080/order', {amount: price})
+            const options = {
+                key: 'rzp_test_twbvrVkvl7ZYGz',
+                amount: data.amount,
+                order_id: data.orderId,
+                name: 'You & Me Shop',
+                description: title,
+                image: 'https://img.freepik.com/free-vector/colorful-letter-gradient-logo-design_474888-2309.jpg',
+                handler: function(response) {
+                    console.log(response)
+                }
+            }
+            const rzp = new Razorpay(options)
+
+            rzp.open()
+
+            rzp.on("payment.failed", function(response) {
+                console.log(response)
+            })
+        }
+        catch(err)
+        {
+            console.log(err)
         }
     }
 
@@ -111,7 +142,7 @@ const Home = ()=>{
                                             <del>₹{item.price}</del>
                                             <label className="text-gray-600">({item.discount}%)</label>
                                         </div>
-                                        <button className="bg-green-500 py-2 w-full rounded text-white font-semibold mt-4">Buy Now</button>
+                                        <button className="bg-green-500 py-2 w-full rounded text-white font-semibold mt-4" onClick={()=>buyNow(item.title,item.price-(item.price*item.discount)/100)}>Buy Now</button>
                                         <button onClick={()=>addToCart(item)} className="bg-rose-500 py-2 w-full rounded text-white font-semibold mt-2">
                                             <i className="ri-shopping-cart-line mr-2"></i>
                                             Add to Cart
