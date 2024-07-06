@@ -11,6 +11,7 @@ const auth = getAuth(firebaseAppConfig)
 const db = getFirestore(firebaseAppConfig)
 
 const Profile = ()=>{
+    const [orders, setOrders] = useState([])
     const [uploading, setUploading] = useState(false)
     const navigate = useNavigate()
     const [session, setSession] = useState(null)
@@ -79,6 +80,24 @@ const Profile = ()=>{
         }
         req()
     }, [session, isUpdated])
+
+    useEffect(()=>{
+        const req = async ()=>{
+            if(session)
+            {
+                const col = collection(db, "orders")
+                const q = query(col, where("userId", "==", session.uid))
+                const snapshot = await getDocs(q)
+                const tmp = []
+                snapshot.forEach((doc)=>{
+                    tmp.push(doc.data())
+                })
+                setOrders(tmp)
+            }
+        }
+
+        req()
+    }, [session])
 
     const setProfilePicture = async (e)=>{
         const input = e.target
@@ -186,6 +205,37 @@ const Profile = ()=>{
 
     return (
         <Layout>
+            <div className='mx-auto md:my-16 shadow-lg rounded-md p-8 md:w-7/12 border'>
+                <div className='flex gap-3'>
+                    <i className="ri-shopping-cart-line text-4xl"></i>
+                    <h1 className="text-3xl font-semibold">Orders</h1>
+                </div>
+
+                <hr className='my-6' />
+
+                {
+                    orders.map((item, index)=>(
+                        <div className='flex gap-3 mb-8' key={index}>
+                            <img src={item.image} className='w-[100px]' />
+                            <div>
+                                <h1 className='capitalize font-semibold text-lg'>{item.title}</h1>
+                                <p className='text-gray-600'>{item.description.slice(0,50)}</p>
+                                <div className='space-x-2'>
+                                    <label className='font-bold text-lg'>
+                                    ₹{item.price-(item.price*item.discount)/100}
+                                    </label>
+                                    <del>₹{item.price}</del>
+                                    <label>({item.discount} Off)%</label>
+                                </div>
+                                <button className='mt-2 bg-green-400 rounded px-3 py-1 text-xs font-medium capitalize'>
+                                    {item.status ? item.status : 'pending'}
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+
             <div className='mx-auto md:my-16 shadow-lg rounded-md p-8 md:w-7/12 border'>
                 <div className='flex gap-3'>
                     <i className="ri-user-line text-4xl"></i>

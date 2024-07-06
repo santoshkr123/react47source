@@ -22,6 +22,7 @@ import Contact from './components/Contact'
 import PreGuard from './components/Guard/PreGuard'
 import Cart from './components/Cart'
 import Profile from './components/Profile'
+import Failed from './components/Failed';
 
 const App = ()=>{
   return (
@@ -47,6 +48,7 @@ const App = ()=>{
           <Route path="payments" element={<Payments />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+        <Route path='failed' element = {<Failed/>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
