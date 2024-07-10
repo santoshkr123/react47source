@@ -1,140 +1,47 @@
-import { useState } from "react"
+import { useState ,useEffect} from "react"
 import Layout from "./Layout"
+import firebaseAppConfig from "../../util/firebase-config"
+import { getFirestore,getDocs,collection,query,getDoc,updateDoc,where,doc } from "firebase/firestore"
+import Swal from "sweetalert2"
+
+const db=getFirestore()
 
 const Orders = ()=>{
-    const [orders, setOrders] = useState([
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            orderId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
+    const [orders, setOrders] = useState([])
+    useEffect(()=>{
+        const req=async()=>{
+            const tmp=[]
+            const snapshot=await getDocs(collection(db,'orders'))
+            snapshot.forEach((docs)=>{
+               const order= doc.data()
+               order.orderId=doc.id
+               tmp.push(order)
+            })
+            setOrders(tmp)
+            
         }
-    ])
+        req()
+    },[])
+    
+    const orderUpdateStatus = async(e , orderId)=>{
+        try
+        {
+        
+   const status= e.target.value
+   const ref=doc(db,"orders",orderId)   
+   await updateDoc(ref,{status:status})
+   new Swal({
+    icon :'Success' ,
+    title :'Order Status Updated!'
 
+   })
+}
+catch(err)
+{
+    console.log(err)
+}
+}
+       
     return (
         <Layout>
             <div>
@@ -168,7 +75,7 @@ const Orders = ()=>{
                                         <td>₹{item.amount.toLocaleString()}</td>
                                         <td>{item.date}</td>
                                         <td className="capitalize">
-                                            <select className="border p-1 border-gray-200">
+                                            <select className="border p-1 border-gray-200" onChange={(e)=>orderUpdateStatus(e,item.orderId)}>
                                                 <option value="pending">Pending</option>
                                                 <option value="processing">Processing</option>
                                                 <option value="dispatched">Dispatched</option>

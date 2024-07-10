@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 const db = getFirestore(firebaseAppConfig)
 const auth = getAuth(firebaseAppConfig)
 
-const Home = ()=>{
+const Home = (slider,title="Latest Products")=>{
     const navigate =useNavigate()
     const [Razorpay] = useRazorpay();
     const [products, setProducts] = useState([])
@@ -134,7 +134,7 @@ const Home = ()=>{
                 </header>
 
                 <div className="md:p-16 p-8">
-                    <h1 className="text-3xl font-bold text-center">Latest Products</h1>
+                    <h1 className="text-3xl font-bold text-center">{title}</h1>
                     <p className="text-center mx-auto text-gray-600 md:w-7/12 mt-2 mb-16">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quod accusantium iusto, consequatur, officiis sapiente iure nisi aspernatur est corporis dolor ratione adipisci</p>
                     <div className="md:w-10/12 mx-auto grid md:grid-cols-4 gap-12">
                         {

@@ -6,7 +6,7 @@ import {
   Route
 } from 'react-router-dom'
 import 'animate.css'
-import Products from './components/Products'
+
 import AdminProducts from './components/Admin/Products'
 import Orders from './components/Admin/Orders'
 import Dashboard from './components/Admin/Dashboard'
@@ -28,8 +28,8 @@ const App = ()=>{
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
+        <Route path="/" element={<Home slider />} />
+        <Route path="/products" element={<Home slider ={false} title="All Products"/>} />
         <Route path="/category" element={<Category />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/profile" element={<Profile />} />
