@@ -1,79 +1,26 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Layout from "./Layout"
+import axios from 'axios'
+import moment from "moment"
 
 const Payments = ()=>{
-    const [payments, setPayments] = useState([
-        {
-            paymentId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            paymentId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            paymentId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            paymentId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            paymentId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            paymentId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
-        },
-        {
-            paymentId: '#rty45678',
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            product: 'lenovo ideapad 360',
-            amount: 52000,
-            date: '12-10-2024 10:15:14 Am',
-            status: 'pending'
+    const [payments, setPayments] = useState([])
+
+    useEffect(()=>{
+        const req = async ()=>{
+            try {
+                const {data} = await axios.get("http://localhost:8080/payments")
+                setPayments(data.items)
+            }
+            catch(err)
+            {
+                console.log(err)
+            }
         }
-    ])
+        req()
+    }, [])
+
+    console.log(payments)
 
     return (
         <Layout>
@@ -99,13 +46,13 @@ const Payments = ()=>{
                                     <tr className="text-center" key={index} style={{
                                         background: (index+1)%2 === 0 ? '#f1f5f9' : 'white'
                                     }}>
-                                        <td className="py-4">{item.paymentId}</td>
-                                        <td className="capitalize">{item.customerName}</td>
+                                        <td className="py-4">{item.id}</td>
+                                        <td className="capitalize">{item.notes.name ? item.notes.name : 'Joh Doe'}</td>
                                         <td>{item.email}</td>
-                                        <td>{item.mobile}</td>
-                                        <td className="capitalize">{item.product}</td>
+                                        <td>{item.contact}</td>
+                                        <td className="capitalize">{item.description}</td>
                                         <td>₹{item.amount.toLocaleString()}</td>
-                                        <td>{item.date}</td>
+                                        <td>{moment.unix(item.created_at).format('DD MMM YYYY, hh:mm:ss A')}</td>
                                     </tr>
                                 ))
                             }

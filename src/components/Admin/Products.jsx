@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Layout from "./Layout"
 import firebaseAppConfig from '../../util/firebase-config'
-import { getFirestore, addDoc, collection, getDocs, getDoc, updateDoc, doc } from "firebase/firestore"
+import { getFirestore, addDoc, collection, getDocs, getDoc, updateDoc, doc, deleteDoc } from "firebase/firestore"
 import Swal from "sweetalert2"
 import uploadFile from "../../util/storage"
 
@@ -19,6 +19,7 @@ const Products = ()=>{
     const [productForm, setProductForm] = useState(model)
     const [productModal, setProductModal] = useState(false)
     const [applyCloseAnimation, setApplyCloseAnimation] = useState(false)
+    const [edit, setEdit] = useState(null)
 
     useEffect(()=>{
         const req = async ()=>{
@@ -88,6 +89,46 @@ const Products = ()=>{
         setUpdateUi(!updateUi)
     }
 
+    const deleteProduct = async (id)=>{
+        try {
+            const ref = doc(db, "products", id)
+            await deleteDoc(ref)
+            setUpdateUi(!updateUi)
+        }
+        catch(err)
+        {
+            new Swal({
+                icon: 'error',
+                title: 'Failed to delete this product'
+            })
+        }
+    }
+
+    const editProduct = (item)=>{
+        setEdit(item)
+        setProductForm(item)
+        setProductModal(true)
+    }
+
+    const saveData = async (e)=>{
+        try {
+            e.preventDefault()
+            const ref = doc(db, "products", edit.id)
+            await updateDoc(ref, productForm)
+            setProductForm(model)
+            setProductModal(false)
+            setEdit(null)
+            setUpdateUi(!updateUi)
+        }
+        catch(err)
+        {
+            new Swal({
+                icon: 'error',
+                title: 'Failed to update this product'
+            })
+        }
+    }
+
     return (
         <Layout>
             <div>
@@ -114,7 +155,17 @@ const Products = ()=>{
                                     />
                                 </div>
                                 <div className="p-4">
-                                    <h1 className="font-semibold text-lg capitalize">{item.title}</h1>
+                                    <div className="flex items-center justify-between">
+                                        <h1 className="font-semibold text-lg capitalize">{item.title}</h1>
+                                        <div className="space-x-2">
+                                            <button onClick={()=>editProduct(item)}>
+                                                <i className="ri-edit-box-line text-violet-600"></i>
+                                            </button>
+                                            <button onClick={()=>deleteProduct(item.id)}>
+                                                <i className="ri-delete-bin-6-line text-rose-600"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div className="flex gap-2 mt-1">
                                         <label>₹{item.price-(item.price*item.discount)/100}</label>
                                         <del className="font-semibold">₹{item.price}</del>
@@ -133,7 +184,7 @@ const Products = ()=>{
                                 <i className="ri-close-line text-lg"></i>
                             </button>
                             <h1 className="text-lg font-semibold">New Product</h1>
-                            <form className="grid grid-cols-2 gap-6 mt-4" onSubmit={createProduct}>
+                            <form className="grid grid-cols-2 gap-6 mt-4" onSubmit={edit ? saveData : createProduct}>
                                 <input
                                     required 
                                     name="title"

@@ -16,8 +16,8 @@ import { useNavigate } from "react-router-dom";
 const db = getFirestore(firebaseAppConfig)
 const auth = getAuth(firebaseAppConfig)
 
-const Home = (slider,title="Latest Products")=>{
-    const navigate =useNavigate()
+const Home = ({slider, title="Latest Products"})=>{
+    const navigate = useNavigate()
     const [Razorpay] = useRazorpay();
     const [products, setProducts] = useState([])
     const [session, setSession] = useState(null)
@@ -48,7 +48,6 @@ const Home = (slider,title="Latest Products")=>{
         req()
     }, [])
 
-    
     const addToCart = async (item)=>{
         try {
             item.userId = session.uid
@@ -70,20 +69,23 @@ const Home = (slider,title="Latest Products")=>{
 
     const buyNow = async (product)=>{
         try {
-            product.userId=session.uid
-            product.status="pending"
+            product.userId = session.uid
+            product.status = "pending"
             const amount = product.price-(product.price*product.discount)/100
             const {data} = await axios.post('http://localhost:8080/order', {amount: amount})
             const options = {
-                key: 'rzp_test_twbvrVkvl7ZYGz',
+                key: 'rzp_test_I8721sxIUbhro5',
                 amount: data.amount,
                 order_id: data.orderId,
                 name: 'You & Me Shop',
                 description: product.title,
                 image: 'https://img.freepik.com/free-vector/colorful-letter-gradient-logo-design_474888-2309.jpg',
-                handler: function(response) {
-                    console.log(response)
+                handler: async function(response) {
+                    await addDoc(collection(db, "orders"), product)
                     navigate('/profile')
+                },
+                notes: {
+                    name: session.displayName
                 }
             }
             const rzp = new Razorpay(options)
@@ -91,7 +93,7 @@ const Home = (slider,title="Latest Products")=>{
             rzp.open()
 
             rzp.on("payment.failed", function(response) {
-            navigate('/failed')
+                navigate('/failed')
             })
         }
         catch(err)
@@ -103,35 +105,38 @@ const Home = (slider,title="Latest Products")=>{
     return (
         <Layout>
             <div>
-                <header>
-                    <Swiper
-                        className="z-[-1]"
-                        pagination={true}
-                        navigation={true}
-                        modules={[Navigation, Pagination]}
-                        slidesPerView={1}
-                    >
-                        <SwiperSlide>
-                            <img src="/images/p1.jpg" />
-                        </SwiperSlide>
+                {
+                    slider && 
+                    <header>
+                        <Swiper
+                            className="z-[-1]"
+                            pagination={true}
+                            navigation={true}
+                            modules={[Navigation, Pagination]}
+                            slidesPerView={1}
+                        >
+                            <SwiperSlide>
+                                <img src="/images/p1.jpg" />
+                            </SwiperSlide>
 
-                        <SwiperSlide>
-                            <img src="/images/p2.jpg" />
-                        </SwiperSlide>
+                            <SwiperSlide>
+                                <img src="/images/p2.jpg" />
+                            </SwiperSlide>
 
-                        <SwiperSlide>
-                            <img src="/images/p3.jpg" />
-                        </SwiperSlide>
+                            <SwiperSlide>
+                                <img src="/images/p3.jpg" />
+                            </SwiperSlide>
 
-                        <SwiperSlide>
-                            <img src="/images/p4.jpg" />
-                        </SwiperSlide>
+                            <SwiperSlide>
+                                <img src="/images/p4.jpg" />
+                            </SwiperSlide>
 
-                        <SwiperSlide>
-                            <img src="/images/p5.jpg" />
-                        </SwiperSlide>
-                    </Swiper>
-                </header>
+                            <SwiperSlide>
+                                <img src="/images/p5.jpg" />
+                            </SwiperSlide>
+                        </Swiper>
+                    </header>
+                }
 
                 <div className="md:p-16 p-8">
                     <h1 className="text-3xl font-bold text-center">{title}</h1>
