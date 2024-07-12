@@ -8,6 +8,8 @@ const db=getFirestore()
 
 const Orders = ()=>{
     const [orders, setOrders] = useState([])
+    const [toggleAddress  , setToggleAddress] =useState(false)
+    const [toggleIndex ,setToggleIndex] = useState(null)
     useEffect(()=>{
         const req=async()=>{
             const tmp=[]
@@ -41,6 +43,7 @@ catch(err)
     console.log(err)
 }
 }
+console.log(orders)
        
     return (
         <Layout>
@@ -49,15 +52,15 @@ catch(err)
                 <div className="mt-6">
                     <table className="w-full">
                         <thead>
-                            <tr className="bg-rose-600 text-white">
-                                <th className="py-4">Order Id</th>
-                                <th>Customer`s Name</th>
-                                <th>Email</th>
-                                <th>Mobile</th>
-                                <th>Product</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Status</th>
+                            <tr className="bg-rose-600 text-white text-left">
+                                <th className="py-4 ">Order Id</th>
+                                <th >Customer`s Name</th>
+                                <th >Email</th>
+                                <th >Mobile</th>
+                                <th >Product</th>
+                                <th >Amount</th>
+                                <th >Date</th>
+                                <th >Status</th>
                             </tr>
                         </thead>
 
@@ -67,13 +70,26 @@ catch(err)
                                     <tr className="text-center" key={index} style={{
                                         background: (index+1)%2 === 0 ? '#f1f5f9' : 'white'
                                     }}>
-                                        <td className="py-4">{item.orderId}</td>
-                                        <td className="capitalize">{item.customerName}</td>
-                                        <td>{item.email}</td>
-                                        <td>{item.mobile}</td>
-                                        <td className="capitalize">{item.product}</td>
-                                        <td>₹{item.amount.toLocaleString()}</td>
-                                        <td>{item.date}</td>
+                                        <td>{item.orderId}</td>
+                                        <td>{item.customerName}</td>
+                                        <td >{item.email}</td>
+                                        <td >{item.address.mobile}</td>
+                                        <td>{item.title}</td>
+                                        <td >₹{item.amount.toLocaleString()}</td>
+                                        <td >{moment(item.createdAt.toDate()).format('DD MMM YYYY,hh:mm : ss A')}</td>
+                                        <td>
+                                            <button className="text-blue-600 font-medium" onClick={()=>{
+                                                setToggleIndex(index)
+                                                setToggleAddress(!toggleAddress)
+                                            }}>Browse Address</button>
+                                            {
+                                               (toggleAddress && toggleIndex ===index) &&
+                                            <div>
+                                         {`${address.address},${item.address.city},${item.address.state},${item.address.country},${item.address.pincode} Mob-${item.address.mobile}`}
+                                         </div>
+
+                                             }
+                                        </td>
                                         <td className="capitalize">
                                             <select className="border p-1 border-gray-200" onChange={(e)=>orderUpdateStatus(e,item.orderId)}>
                                                 <option value="pending">Pending</option>

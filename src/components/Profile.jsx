@@ -18,7 +18,7 @@ const Profile = ()=>{
     const [formValue, setFormValue] = useState({
         fullname: '',
         email: '',
-        mobile: ''
+    
     })
     const [isAddress, setIsAddress] = useState(false)
     const [docId, setDocId] = useState(null)
@@ -30,7 +30,8 @@ const Profile = ()=>{
         state: '',
         country: '',
         pincode: '',
-        userId: ''
+        userId: '',
+        mobile:''
     })
 
     useEffect(()=>{
@@ -280,24 +281,16 @@ const Profile = ()=>{
                         />
                     </div>
 
-                    <div className='flex flex-col gap-2'>
-                        <label className='text-lg font-semibold'>Mobile</label>
-                        <input 
-                            onChange={handleFormValue}
-                            required
-                            name="mobile"
-                            type="number"
-                            className='p-2 rounded border border-gray-300'
-                            value={formValue.mobile}
-                        />
-                    </div>
+                   
 
                     <div />
+                    <div className='col-span-2'>
 
                     <button className='px-4 py-2 bg-rose-600 text-white rounded w-fit hover:bg-green-600'>
                         <i className="ri-save-line mr-2"></i>
                         Save
                     </button>
+                    </div>
                 </form>
             </div>
 
@@ -370,6 +363,19 @@ const Profile = ()=>{
                         />
                     </div>
 
+                    <div className="flex flex-col gap-2">
+                <label className="text-lg font-semibold">Mobile</label>
+                <input 
+                 onChange={handleAddressForm}
+                required
+                type="number"
+                name="mobile"
+                className="p-2 rounded border border-gray-300"
+                value={formValue.mobile}
+                />
+                </div>
+                <div className='col-span-2'>
+
                     {
                         isAddress ? 
                         <button className='px-4 py-2 bg-rose-600 text-white rounded w-fit hover:bg-green-600'>
@@ -382,6 +388,7 @@ const Profile = ()=>{
                             Submit
                         </button>
                     }
+                    </div>
 
 
                 </form>

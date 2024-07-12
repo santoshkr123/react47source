@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import firebaseAppConfig from "../util/firebase-config";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
+import { getFirestore, addDoc, collection, getDocs,serverTimestamp,query,where } from "firebase/firestore";
 import "swiper/css";
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -21,6 +21,7 @@ const Home = ({slider, title="Latest Products"})=>{
     const [Razorpay] = useRazorpay();
     const [products, setProducts] = useState([])
     const [session, setSession] = useState(null)
+    const [address,setAddress] = useState(null)
 
     useEffect(()=>{
         onAuthStateChanged(auth, (user)=>{
@@ -47,6 +48,20 @@ const Home = ({slider, title="Latest Products"})=>{
         }
         req()
     }, [])
+
+    useEffect(()=>{
+        const req=async()=>{
+         const col=   collection(db,"addresses")
+      const q=   query(col,where("userId","==",session.uid))
+      const snapshot=await getDocs(q)
+      snapshot.forEach((doc)=>{
+        const document=doc.data()
+        setAddress(document)
+      })
+
+        }
+        req()
+    },[])
 
     const addToCart = async (item)=>{
         try {
@@ -81,6 +96,10 @@ const Home = ({slider, title="Latest Products"})=>{
                 description: product.title,
                 image: 'https://img.freepik.com/free-vector/colorful-letter-gradient-logo-design_474888-2309.jpg',
                 handler: async function(response) {
+                    product.email=session.email
+                    product.customerName=session.displayName
+                    const createdAt=serverTimestamp()
+                    product.address=address
                     await addDoc(collection(db, "orders"), product)
                     navigate('/profile')
                 },
