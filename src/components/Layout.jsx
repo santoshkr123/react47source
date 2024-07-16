@@ -8,6 +8,7 @@ const Layout = ({children})=>{
     const [open, setOpen] = useState(false)
     const [accountMenu, setAccountMenu] = useState(false)
     const [session, setSession] = useState(null)
+    const [cartCount , setCartCount] = useState(0)
     const navigate = useNavigate()
 
     useEffect(()=>{
@@ -80,6 +81,15 @@ const Layout = ({children})=>{
                                 </li>
                             ))
                         }
+                        {
+                            session &&
+                            <link to="/cart">
+                                <i className="ri-shopping-cart-line"></i>
+                                <div className="absolute -top-2 -right-2 font-bold text-rose-600">{cartCount}</div>
+                            </link>
+                            
+                        }
+
                         {
                             !session && 
                             <>
@@ -204,6 +214,7 @@ const Layout = ({children})=>{
                 {
                     session && 
                     <button className="relative" onClick={()=>setAccountMenu(!accountMenu)}>
+                       
                         <div className="flex items-center gap-3">
                             <img src={session.photoURL ? session.photoURL : "/images/avt.avif"} className="w-10 h-10 rounded-full" />
                             <div>
@@ -213,6 +224,7 @@ const Layout = ({children})=>{
                         </div>
                         {
                             accountMenu && 
+                            
                             <div className="flex flex-col items-start animate__animated animate__fadeIn w-[150px] py-3 bg-white absolute top-12 right-0 shadow-xl">
                                 <Link to="/profile" className="w-full text-left px-3 py-2 hover:bg-gray-100">
                                     <i className="ri-user-line mr-2"></i>
@@ -231,6 +243,7 @@ const Layout = ({children})=>{
                             </div>
                         }
                     </button>
+                    
                 }
                     {
                         menus.map((item, index)=>(
