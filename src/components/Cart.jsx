@@ -134,7 +134,7 @@ const Cart = ()=>{
     }
 
     return (
-        <Layout>
+        <Layout update={updateUi}>
             <div className="md:my-16 mx-auto md:w-7/12 bg-white shadow-lg border rounded-md p-8">
                 <div className="flex items-center gap-4">
                     <i className="ri-shopping-cart-line text-4xl"></i>

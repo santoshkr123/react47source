@@ -22,6 +22,7 @@ const Home = ({slider, title="Latest Products"})=>{
     const [products, setProducts] = useState([])
     const [session, setSession] = useState(null)
     const [address,setAddress] = useState(null)
+    const [updateUi ,setUpdateUi] = useState(false)
 
     useEffect(()=>{
         onAuthStateChanged(auth, (user)=>{
@@ -67,6 +68,7 @@ const Home = ({slider, title="Latest Products"})=>{
         try {
             item.userId = session.uid
             await addDoc(collection(db, "carts"), item)
+            setUpdateUi(!updateUi)
             new Swal({
                 icon: 'success',
                 title: 'Product Added !'
@@ -122,7 +124,7 @@ const Home = ({slider, title="Latest Products"})=>{
     }
 
     return (
-        <Layout>
+        <Layout update={updateUi}>
             <div>
                 {
                     slider && 

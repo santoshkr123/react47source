@@ -2,7 +2,9 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import firebaseAppConfig from "../util/firebase-config"
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { getFirestore,addDoc,collection ,serverTimestamp} from "firebase/firestore"
 
+const db=getFirestore(firebaseAppConfig)
 const auth = getAuth(firebaseAppConfig)
 
 const Signup = ()=>{
@@ -14,6 +16,7 @@ const Signup = ()=>{
     const [formValue, setFormValue] = useState({
         fullname: '',
         email: '',
+        mobile:'' ,
         password: ''
     })
 
@@ -21,8 +24,16 @@ const Signup = ()=>{
         try {
             e.preventDefault()
             setLoader(true)
-            await createUserWithEmailAndPassword(auth, formValue.email, formValue.password)
+          const userCre=  await createUserWithEmailAndPassword(auth, formValue.email, formValue.password)
             await updateProfile(auth.currentUser, {displayName: formValue.fullname})
+           await addDoc(collection(db,"customers"),{
+                email :formValue.email ,
+                customerName : formValue.fullname,
+                userId:userCre.user.uid ,
+                mobile :formValue.mobile,
+                createAt:serverTimestamp()
+            })
+
             navigate('/')
         }
         catch(err)
@@ -71,6 +82,18 @@ const Signup = ()=>{
                             type="email"
                             name="email"
                             placeholder="example@mail.com"
+                            className="p-3 border border-gray-300 rounded"
+                        />
+                    </div>
+
+                     <div className="flex flex-col">
+                        <label className="font-semibold text-lg mb-1">Mobile</label>
+                        <input 
+                            onChange={handleOnChange}
+                            required
+                            type="number"
+                            name="mobile"
+                            placeholder="0123456789"
                             className="p-3 border border-gray-300 rounded"
                         />
                     </div>

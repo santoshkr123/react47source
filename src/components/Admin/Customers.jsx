@@ -1,72 +1,27 @@
-import { useState } from "react"
+import { useState ,useEffect} from "react"
 import Layout from "./Layout"
+import firebaseAppConfig from "../../util/firebase-config"
+import { getFirestore,getDocs,collection } from "firebase/firestore"
+import moment from "moment"
+
+const db=getFirestore(firebaseAppConfig)
 
 const Customers = ()=>{
-    const [customers, setCustomers] = useState([
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
-        },
-        {
-            customerName: 'er saurav',
-            email: 'ersaurav@gmail.com',
-            mobile: '+91 9472395194',
-            date: '12-10-2024 10:15:14 Am',
-            address: 'Electronic city, Phase-2, Bengaluru, Karnatka 560100'
+    const [customers, setCustomers] = useState([])
+
+    useEffect(()=>{
+        const req =async ()=>{
+            const snapshot =await getDocs(collection(db,"customers"))
+            const tmp = []
+            snapshot.forEach=((doc)=>{
+                const document=doc.data()
+            tmp.push(document)
+        })
+        setCustomers(tmp)
         }
-    ])
+req()
+
+    },[])
 
     return (
         <Layout>
@@ -80,7 +35,7 @@ const Customers = ()=>{
                                 <th>Email</th>
                                 <th>Mobile</th>
                                 <th>Date</th>
-                                <th>Address</th>
+                            
                             </tr>
                         </thead>
 
@@ -104,8 +59,8 @@ const Customers = ()=>{
                                         </td>
                                         <td>{item.email}</td>
                                         <td>{item.mobile}</td>
-                                        <td>{item.date}</td>
-                                        <td>{item.address}</td>
+                                        <td>{moment(item.createdAt.toDate()).format('DD MMM YYYY,hh:mm:ss A')}</td>
+                                        
                                     </tr>
                                 ))
                             }

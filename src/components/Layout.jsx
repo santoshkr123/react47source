@@ -2,13 +2,16 @@ import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import firebaseAppConfig from '../util/firebase-config'
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
+import { collection,query,where,getDocs,getFirestore } from "firebase/firestore"
 const auth = getAuth(firebaseAppConfig)
+const db = getFirestore(firebaseAppConfig)
 
-const Layout = ({children})=>{
+const Layout = ({children,update})=>{
     const [open, setOpen] = useState(false)
     const [accountMenu, setAccountMenu] = useState(false)
     const [session, setSession] = useState(null)
     const [cartCount , setCartCount] = useState(0)
+    
     const navigate = useNavigate()
 
     useEffect(()=>{
@@ -21,7 +24,21 @@ const Layout = ({children})=>{
                 setSession(false)
             }
         })
-    },[])
+    },[]) 
+    
+    useEffect(()=>{
+        if(session)
+        {
+            const req =async()=>{
+                const col =collection(db,"carts")
+                const q = query(col,where("userId" ,"==", session.uid))
+              const snapshop=  await getDocs(q)
+              setCartCount(snapshop.size)
+
+            }
+            req()
+        }
+    },[session,update ])
 
     const menus = [
         {
@@ -82,7 +99,7 @@ const Layout = ({children})=>{
                             ))
                         }
                         {
-                            session &&
+                            (session && cartCount > 0) &&
                             <link to="/cart">
                                 <i className="ri-shopping-cart-line"></i>
                                 <div className="absolute -top-2 -right-2 font-bold text-rose-600">{cartCount}</div>
