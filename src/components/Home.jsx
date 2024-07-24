@@ -86,6 +86,24 @@ const Home = ({slider, title="Latest Products"})=>{
 
     const buyNow = async (product)=>{
         try {
+            const col =collection(db,"addresses")
+            const q=query(col,where("userId","==",session.uid))
+            const snapshot = await getDocs(q)
+            if(snapshot.empty)
+                {
+                    new Swal({
+                        icon :"info" ,
+                        title :"Please update your address" ,
+                        confirm : ()=>alert
+                    })
+                    .then((result)=>{
+                      if(result.isConfirmed)
+                        {
+                            navigate("/profile#address")
+                        }
+                    })
+                    return false
+                }
             product.userId = session.uid
             product.status = "pending"
             const amount = product.price-(product.price*product.discount)/100

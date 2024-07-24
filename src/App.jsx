@@ -23,6 +23,7 @@ import PreGuard from './components/Guard/PreGuard'
 import Cart from './components/Cart'
 import Profile from './components/Profile'
 import Failed from './components/Failed';
+import AdminGuard from './components/Guard/AdminGuard';
 
 const App = ()=>{
   return (
@@ -40,6 +41,7 @@ const App = ()=>{
         </Route>
 
         <Route path="/contact-us" element={<Contact />} />
+        <Route element ={<AdminGuard/>}>
         <Route path="/admin">
           <Route path="products" element={<AdminProducts />} />
           <Route path="customers" element={<Customers />} />
@@ -47,6 +49,7 @@ const App = ()=>{
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="payments" element={<Payments />} />
           <Route path="settings" element={<Settings />} />
+          </Route>
         </Route>
         <Route path='failed' element = {<Failed/>}/>
         <Route path="*" element={<NotFound />} />

@@ -31,6 +31,7 @@ const Signup = ()=>{
                 customerName : formValue.fullname,
                 userId:userCre.user.uid ,
                 mobile :formValue.mobile,
+                role:'user' ,
                 createAt:serverTimestamp()
             })
 

@@ -73,7 +73,7 @@ console.log(orders)
                                         <td>{item.orderId}</td>
                                         <td>{item.customerName}</td>
                                         <td >{item.email}</td>
-                                        <td >{item.address.mobile}</td>
+                                        <td >{item.address ? item.address.mobile:"Address not updated"}</td>
                                         <td>{item.title}</td>
                                         <td >₹{item.amount.toLocaleString()}</td>
                                         <td >{moment(item.createdAt.toDate()).format('DD MMM YYYY,hh:mm : ss A')}</td>

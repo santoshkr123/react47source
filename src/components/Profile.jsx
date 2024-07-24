@@ -363,7 +363,7 @@ const Profile = ()=>{
                         />
                     </div>
 
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2" id="address">
                 <label className="text-lg font-semibold">Mobile</label>
                 <input 
                  onChange={handleAddressForm}
