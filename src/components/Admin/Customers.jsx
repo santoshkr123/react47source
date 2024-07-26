@@ -59,7 +59,7 @@ req()
                                         </td>
                                         <td>{item.email}</td>
                                         <td>{item.mobile}</td>
-                                        <td>{moment(item.createdAt.toDate()).format('DD MMM YYYY,hh:mm:ss A')}</td>
+                                        <td>{moment(item.createdAt).format('DD MMM YYYY,hh:mm:ss A')}</td>
                                         
                                     </tr>
                                 ))

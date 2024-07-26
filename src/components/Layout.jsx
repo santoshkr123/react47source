@@ -2,16 +2,16 @@ import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import firebaseAppConfig from '../util/firebase-config'
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
-import { collection,query,where,getDocs,getFirestore } from "firebase/firestore"
+import { collection, query, where, getDocs, getFirestore } from "firebase/firestore"
 const auth = getAuth(firebaseAppConfig)
 const db = getFirestore(firebaseAppConfig)
 
-const Layout = ({children,update})=>{
+const Layout = ({children, update})=>{
     const [open, setOpen] = useState(false)
     const [accountMenu, setAccountMenu] = useState(false)
     const [session, setSession] = useState(null)
-    const [cartCount , setCartCount] = useState(0)
-    
+    const [cartCount, setCartCount] = useState(0)
+    const [role, setRole] = useState(null)
     const navigate = useNavigate()
 
     useEffect(()=>{
@@ -24,21 +24,36 @@ const Layout = ({children,update})=>{
                 setSession(false)
             }
         })
-    },[]) 
-    
+    },[])
+
     useEffect(()=>{
         if(session)
         {
-            const req =async()=>{
-                const col =collection(db,"carts")
-                const q = query(col,where("userId" ,"==", session.uid))
-              const snapshop=  await getDocs(q)
-              setCartCount(snapshop.size)
-
+            const req = async ()=>{
+                const col = collection(db, "carts")
+                const q = query(col, where("userId", "==", session.uid))
+                const snapshop = await getDocs(q)
+                setCartCount(snapshop.size)
             }
             req()
         }
-    },[session,update ])
+    }, [session, update])
+
+    useEffect(()=>{
+        if(session)
+        {
+            const req = async ()=>{
+                const col = collection(db, "customers")
+                const q = query(col, where("userId", "==", session.uid))
+                const snapshop = await getDocs(q)
+                snapshop.forEach((doc)=>{
+                    const customer = doc.data()
+                    setRole(customer.role)
+                })
+            }
+            req()
+        }
+    }, [session])
 
     const menus = [
         {
@@ -99,14 +114,12 @@ const Layout = ({children,update})=>{
                             ))
                         }
                         {
-                            (session && cartCount > 0) &&
-                            <link to="/cart">
-                                <i className="ri-shopping-cart-line"></i>
-                                <div className="absolute -top-2 -right-2 font-bold text-rose-600">{cartCount}</div>
-                            </link>
-                            
+                            (session && cartCount > 0) && 
+                            <Link to="/cart" className="relative">
+                                <i className="ri-shopping-cart-line text-xl"></i>
+                                <div className="absolute -top-4 -right-4 font-bold text-white text-xs bg-rose-600 rounded-full w-6 h-6 flex justify-center items-center">{cartCount}</div>
+                            </Link>
                         }
-
                         {
                             !session && 
                             <>
@@ -129,6 +142,14 @@ const Layout = ({children,update})=>{
                                 {
                                     accountMenu && 
                                     <div className="flex flex-col items-start animate__animated animate__fadeIn w-[150px] py-3 bg-white absolute top-12 right-0 shadow-xl">
+                                        {
+                                            (role && role === "admin") &&
+                                            <Link to="/admin/dashboard" className="w-full text-left px-3 py-2 hover:bg-gray-100">
+                                                <i className="ri-file-shield-2-line mr-2"></i>
+                                                Admin Panel
+                                            </Link>
+                                        }
+                                        
                                         <Link to="/profile" className="w-full text-left px-3 py-2 hover:bg-gray-100">
                                             <i className="ri-user-line mr-2"></i>
                                             My Profile
@@ -231,7 +252,6 @@ const Layout = ({children,update})=>{
                 {
                     session && 
                     <button className="relative" onClick={()=>setAccountMenu(!accountMenu)}>
-                       
                         <div className="flex items-center gap-3">
                             <img src={session.photoURL ? session.photoURL : "/images/avt.avif"} className="w-10 h-10 rounded-full" />
                             <div>
@@ -241,7 +261,6 @@ const Layout = ({children,update})=>{
                         </div>
                         {
                             accountMenu && 
-                            
                             <div className="flex flex-col items-start animate__animated animate__fadeIn w-[150px] py-3 bg-white absolute top-12 right-0 shadow-xl">
                                 <Link to="/profile" className="w-full text-left px-3 py-2 hover:bg-gray-100">
                                     <i className="ri-user-line mr-2"></i>
@@ -260,7 +279,6 @@ const Layout = ({children,update})=>{
                             </div>
                         }
                     </button>
-                    
                 }
                     {
                         menus.map((item, index)=>(
